@@ -41,13 +41,13 @@ system {
     }
 }
 interfaces {
-    {{ mgmt_port }} {
-        unit 0 {
-            family inet {
-              address {{ junos_host }}/{{ mgmt_sub_mask }};
-            }
-        }
-    }
+#    {{ mgmt_port }} {
+#        unit 0 {
+#            family inet {
+#              address {{ junos_host }}/{{ mgmt_sub_mask }};
+#            }
+#        }
+#    }
     lo0 {
         unit 0 {
             family inet {

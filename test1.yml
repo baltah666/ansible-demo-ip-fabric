@@ -1,0 +1,25 @@
+---
+# This playbook will generate and apply configuration to all of the devices
+
+#- include: pb.conf.all.yaml
+
+- name: Apply configuration
+  hosts: juniper
+#  hosts: LEAF01
+  connection: local
+  gather_facts: no
+  roles:
+    - Juniper.junos
+  tasks:
+
+    - name: install generated configuration file onto device
+      juniper_junos_config:
+        provider:
+          host: "{{ junos_host }}"
+          user: "{{ junos_ssh_user }}"
+          passwd: "{{ junos_pwd_clear }}"
+          port: 22
+          timeout: 120
+        src: "{{ junos_conf }}"
+        load: replace
+        comment: "playbook base-settings.yaml"

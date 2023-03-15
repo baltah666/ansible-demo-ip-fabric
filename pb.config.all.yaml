@@ -1,7 +1,7 @@
 ---
 # This playbook will generate and apply configuration to all of the devices
 
-- include: pb.make-clean.yaml
+#- include: pb.make-clean.yaml
 
 - name: Create configuration for leaf devices
   hosts: leaf
