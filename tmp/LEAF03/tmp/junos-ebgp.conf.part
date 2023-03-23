@@ -1,0 +1,73 @@
+interfaces {
+    xe-0/0/0 {
+        mtu 9192;
+        unit 0 {
+            description "to SPINE01";
+            family inet {
+                mtu 9000;
+                address 171.0.0.9/31;
+            }
+        }
+    }
+    xe-0/0/1 {
+        mtu 9192;
+        unit 0 {
+            description "to SPINE02";
+            family inet {
+                mtu 9000;
+                address 171.0.0.11/31;
+            }
+        }
+    }
+}
+protocols {
+    bgp {
+        log-updown;
+        graceful-restart;
+        group underlay {
+            import bgp-clos-in;
+            export  bgp-clos-out;
+            type external;
+            mtu-discovery;
+            local-as 60013;
+            multipath multiple-as;
+            neighbor 171.0.0.8 {
+                peer-as 60001;
+            }
+            neighbor 171.0.0.10 {
+                peer-as 60002;
+            }
+        }
+    }
+}
+
+routing-options {
+    router-id 1.1.1.13;
+    forwarding-table {
+        export PFE-LB;
+    }
+}
+
+policy-options {
+    policy-statement PFE-LB {
+        then {
+            load-balance per-packet;
+        }
+    }
+    policy-statement bgp-clos-in {
+        term bgp-clos-in {
+            then accept;
+        }
+    }
+    policy-statement bgp-clos-out {
+        term bgp-clos-out {
+            then {
+                next-hop self;
+                accept;
+            }
+        }
+        term reject {
+            then reject;
+        }
+    }
+}

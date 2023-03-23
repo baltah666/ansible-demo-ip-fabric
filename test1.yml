@@ -5,7 +5,7 @@
 
 - name: Apply configuration
   hosts: juniper
-#  hosts: LEAF01
+#  hosts: LEAF02
   connection: local
   gather_facts: no
   roles:

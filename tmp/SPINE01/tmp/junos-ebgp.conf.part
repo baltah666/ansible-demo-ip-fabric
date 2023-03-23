@@ -1,0 +1,125 @@
+interfaces {
+    xe-0/0/0 {
+        mtu 9192;
+        unit 0 {
+            description "to LEAF01";
+            family inet {
+                mtu 9000;
+                address 171.0.0.0/31;
+            }
+        }
+    }
+    xe-0/0/1 {
+        mtu 9192;
+        unit 0 {
+            description "to LEAF02";
+            family inet {
+                mtu 9000;
+                address 171.0.0.4/31;
+            }
+        }
+    }
+    xe-0/0/2 {
+        mtu 9192;
+        unit 0 {
+            description "to LEAF03";
+            family inet {
+                mtu 9000;
+                address 171.0.0.8/31;
+            }
+        }
+    }
+    xe-0/0/3 {
+        mtu 9192;
+        unit 0 {
+            description "to LEAF04";
+            family inet {
+                mtu 9000;
+                address 171.0.0.12/31;
+            }
+        }
+    }
+    xe-0/0/4 {
+        mtu 9192;
+        unit 0 {
+            description "to LEAF05";
+            family inet {
+                mtu 9000;
+                address 171.0.0.16/31;
+            }
+        }
+    }
+    xe-0/0/5 {
+        mtu 9192;
+        unit 0 {
+            description "to LEAF06";
+            family inet {
+                mtu 9000;
+                address 171.0.0.20/31;
+            }
+        }
+    }
+}
+protocols {
+    bgp {
+        log-updown;
+        graceful-restart;
+        group underlay {
+            import bgp-clos-in;
+            export  bgp-clos-out;
+            type external;
+            mtu-discovery;
+            local-as 60001;
+            multipath multiple-as;
+            neighbor 171.0.0.1 {
+                peer-as 60011;
+            }
+            neighbor 171.0.0.5 {
+                peer-as 60012;
+            }
+            neighbor 171.0.0.9 {
+                peer-as 60013;
+            }
+            neighbor 171.0.0.13 {
+                peer-as 60014;
+            }
+            neighbor 171.0.0.17 {
+                peer-as 60015;
+            }
+            neighbor 171.0.0.21 {
+                peer-as 60016;
+            }
+        }
+    }
+}
+
+routing-options {
+    router-id 1.1.1.1;
+    forwarding-table {
+        export PFE-LB;
+    }
+}
+
+policy-options {
+    policy-statement PFE-LB {
+        then {
+            load-balance per-packet;
+        }
+    }
+    policy-statement bgp-clos-in {
+        term bgp-clos-in {
+            then accept;
+        }
+    }
+    policy-statement bgp-clos-out {
+        term bgp-clos-out {
+            then {
+                next-hop self;
+                accept;
+            }
+        }
+        term reject {
+            then reject;
+        }
+    }
+}
